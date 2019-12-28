@@ -1,0 +1,7 @@
+{
+    "name": "privyreza/pdr-php-sdk",
+    "description": "Register Zim domains",
+    "require": {
+        "php": "^7.2"
+    }
+}
