@@ -1,7 +1,15 @@
 {
     "name": "privyreza/pdr-php-sdk",
     "description": "Register Zim domains",
+    "license": "MIT",
     "require": {
-        "php": "^7.2"
+        "php": "^7.2",
+        "guzzlehttp/guzzle": "^6.5",
+        "vlucas/phpdotenv": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pdr\\": "src/"
+        }
     }
 }
