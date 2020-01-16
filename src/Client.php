@@ -93,14 +93,72 @@ class Client
     }
 
     /**
+     * Create Domain
+     */
+    public function createDomain($domain){
+        $data = [
+            "domain" => $domain,
+            "status" => "pending"
+        ];
+
+        return $this->_post('domains', $data);
+    }
+
+    /**
      * Register Domain
      */
-    public function registerDomain($domain_id){
+    public function registerDomain($data){
+        // Create Domain
+        $domain = $this->createDomain($data['domain']);
+        $domain_id = $domain->data->id;
+
+        // Create Contact
+        $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain_id]);
+        $contact = $this->createContact($contact_data);
+
+        // Create NS
+        $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain_id]);
+        $ns = $this->createNS($ns_data);
+
+        // Submit the domain for registration
         $data = [
             "action" => 'register'
         ];
 
         return $this->_patch('domains', $domain_id, $data);
+    }
+    
+    public function getNameservers($domain){
+        $nameserversFilters = [
+            "domain_id" => $this->getDomainId($domain)
+        ];
+        
+        
+        $ns =  $this->_get('nameservers', "", $nameserversFilters)->data[0]->attributes;
+       
+        return $ns;
+    }
+    
+    protected function getDomainId($domain){
+        return $domain_id = $this->_get("domains", "", $domain)->data[0]->id;
+    }
+    
+    public function setNameservers($postData){
+        $domain_id = $this->getDomainId($postData['domain']);
+        
+        $nameserversFilters = [
+            "domain_id" => $this->getDomainId($domain)
+        ];
+        
+        $nsId = $this->_get("nameservers", "", $nameserversFilters)->data[0]->id;
+        
+        return $this->_patch('nameservers', $nsId, $postData['nameservers']);
+    }
+
+    public function updateContact($contact){
+        $id = $contact['id'];
+        
+        return $this->_patch('contacts', $id, $contact['data']);
     }
 
     /**
@@ -145,8 +203,23 @@ class Client
         }
     }
 
-    protected function _get(){
-
+    protected function _get($resource, $record = "", $filters = []){
+        $url = $this->apiUrl . '/' . $resource;
+        
+        if( ! empty($record)){
+            $url .= "/" . $record;
+        } elseif ( ! empty ($filters) ) {
+            $i = 0;
+            $url .= "?";
+            
+            foreach ( $filters as $key => $filter ) {
+                $url .= "filter[$key]=$filter&";
+            }
+        }
+        
+        $response = $this->client->get($url);
+        
+        return json_decode( ( string ) $response->getBody());
     }
 
     protected function _post($resource, $data){
@@ -168,7 +241,7 @@ class Client
             $options
             );
 
-            return (string) $response->getBody();
+            return json_decode((string) $response->getBody());
         } catch(\Exception $ex) {
             $error = [
                 "errors" => [
@@ -202,6 +275,7 @@ class Client
             $url, 
             $options
             );
+            
 
             return (string) $response->getBody();
         } catch(\Exception $ex) {
