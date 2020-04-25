@@ -2,6 +2,9 @@
 namespace Pdr;
 
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 
 class Client
 {
@@ -44,7 +47,7 @@ class Client
     /**
      * Initialize the client
      */
-    public function __construct(){
+    public function __construct($token){
         $this->host = getenv('HOST');
         $this->apiVersion = getenv('API_VERSION');
         $this->apiUrl = $this->host . '/api/' . $this->apiVersion;
@@ -59,11 +62,9 @@ class Client
         // Set Headers
         $this->headers = [
             "Accept" => "application/vnd.api+json",
-            "Content-Type" => "application/vnd.api+json"
+            "Content-Type" => "application/vnd.api+json",
+            'Authorization' => 'Bearer ' . $token
         ];
-
-        // Get Token
-        $this->authorize();
     }
 
     /**
@@ -95,12 +96,7 @@ class Client
     /**
      * Create Domain
      */
-    public function createDomain($domain){
-        $data = [
-            "domain" => $domain,
-            "status" => "pending"
-        ];
-
+    public function createDomain($data){
         return $this->_post('domains', $data);
     }
 
@@ -108,31 +104,105 @@ class Client
      * Register Domain
      */
     public function registerDomain($data){
-        // Create Domain
-        $domain = $this->createDomain($data['domain']);
-        $domain_id = $domain->data->id;
-
-        // Create Contact
-        $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain_id]);
-        $contact = $this->createContact($contact_data);
-
-        // Create NS
-        $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain_id]);
-        $ns = $this->createNS($ns_data);
-
-        // Submit the domain for registration
-        $data = [
-            "action" => 'register'
-        ];
-
-        return $this->_patch('domains', $domain_id, $data);
-    }
-    
-    public function getNameservers($domain){
-        $nameserversFilters = [
-            "domain_id" => $this->getDomainId($domain)
+        // Check if domain does not exist first
+        $domain_name = $data['domain'];
+        $domainFilter = [
+            'name' => $domain_name
         ];
         
+        $domain = $this->_get('domains', '', $domainFilter)->data[0];
+        
+        if (is_null($domain)){
+             // Create Domain
+            $domainData = [
+                "name" => $data['domain'],
+                "status" => "pending"
+            ];
+            $domain = $this->createDomain($domainData)->data;
+    
+            // Create Contact
+            $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain->id]);
+            $contact = $this->createContact($contact_data);
+    
+            // Create NS
+            $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain->id]);
+            $ns = $this->createNS($ns_data);
+        }
+        
+        $domain_id = $domain->id;
+        
+        $domainStatus = $domain->attributes->status;
+        
+        if ($domainStatus !== 'registered'){
+            // Submit the domain for registration
+            $registrationLink = 'domains/' . $domain_id . '/register';
+            return $this->_post($registrationLink, $data);
+        } else {
+            throw new \Exception('ERR66 : Domain already registered');
+        }
+    }
+    
+    public function getDomainInfo($data){
+        $domain_name = $data['domain']['name'];
+        $domainFilter = [
+            'name' => $domain_name
+        ];
+        
+        $domain = $this->_get('domains', '', $domainFilter)->data[0]->attributes;
+        
+        if( is_null ( $domain )){
+            // Create domain if it does not exist : TOREMOVE
+            $domainData = [
+                'domain' => $domain_name,
+                'status' => 'registered',
+                'registration_date' => $data['domain']['registration_date'],
+                'expiration_date' => $data['domain']['expiration_date']
+            ];
+            
+            
+            $domain = $this->createDomain($domainData);
+            $domain_id = $domain->data->id;
+            
+            // Create Contact
+            $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain_id]);
+            $contact = $this->createContact($contact_data);
+    
+            // Create NS
+            $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain_id]);
+            $ns = $this->createNS($ns_data);
+            
+            return $domain->data->attributes;
+        } else {
+            return $domain;
+        }
+    }
+
+    public function getWhoisInformation($postData){
+        $domainFilter = [
+           'name' => $postData['domain']
+       ];
+       
+       $domain_id = $this->getDomainId($domainFilter);
+       
+       $contactsFilters = [
+           "domain_id" => $domain_id
+       ];
+       
+       $contacts =  $this->_get('contacts', "", $contactsFilters)->data[0]->attributes;
+      
+       return $contacts;
+   }
+    
+    public function getNameservers($postData){
+         $domainFilter = [
+            'name' => $postData['domain']
+        ];
+        
+        $domain_id = $this->getDomainId($domainFilter);
+        
+        $nameserversFilters = [
+            "domain_id" => $domain_id
+        ];
         
         $ns =  $this->_get('nameservers', "", $nameserversFilters)->data[0]->attributes;
        
@@ -140,14 +210,18 @@ class Client
     }
     
     protected function getDomainId($domain){
-        return $domain_id = $this->_get("domains", "", $domain)->data[0]->id;
+        return $this->_get("domains", "", $domain)->data[0]->id;
     }
     
     public function setNameservers($postData){
-        $domain_id = $this->getDomainId($postData['domain']);
+        $domainFilter = [
+            'name' => $postData['domain']
+        ];
+        
+        $domain_id = $this->getDomainId($domainFilter);
         
         $nameserversFilters = [
-            "domain_id" => $this->getDomainId($domain)
+            "domain_id" => $domain_id
         ];
         
         $nsId = $this->_get("nameservers", "", $nameserversFilters)->data[0]->id;
@@ -155,10 +229,47 @@ class Client
         return $this->_patch('nameservers', $nsId, $postData['nameservers']);
     }
 
-    public function updateContact($contact){
-        $id = $contact['id'];
+    public function updateWhoisInformation($data){
+        $domainFilter = [
+            'name' => $data['domain']
+        ];
         
-        return $this->_patch('contacts', $id, $contact['data']);
+        $domain_id = $this->getDomainId($domainFilter);
+        
+
+        // Get Contact
+        $contactsFilter = [
+            "domain_id" => $domain_id
+        ];
+
+        $contantId = $this->_get('contacts', '', $contactsFilter)->data[0]->id;
+        
+        // Get registrant
+        $registrantFilter = [
+            "contact_id" => $contantId
+        ];
+
+        $registrantId = $this->_get('registrants', '', $registrantFilter)->data[0]->id;
+
+        // Update registrant
+        $registrant = $this->_patch('registrants', $registrantId, $data['contacts']['registrant']);
+
+        // Get tech contact
+        $techFilter = [
+            "contact_id" => $contantId
+        ];
+
+        $techId = $this->_get('techs', '', $techFilter)->data[0]->id;
+
+        // Update Tech Contact
+        $tech = $this->_patch('techs', $techId, $data['contacts']['tech']);
+
+        return [
+            'contacts' => [
+                'registrant' => $registrant,
+                'tech' => $tech
+            ]
+        ];
     }
 
     /**
@@ -204,12 +315,17 @@ class Client
     }
 
     protected function _get($resource, $record = "", $filters = []){
+        $options = [
+            "headers" => $this->headers,
+            "http_errors" => false,
+            'timeout' => 2000
+        ];
+        
         $url = $this->apiUrl . '/' . $resource;
         
         if( ! empty($record)){
             $url .= "/" . $record;
         } elseif ( ! empty ($filters) ) {
-            $i = 0;
             $url .= "?";
             
             foreach ( $filters as $key => $filter ) {
@@ -217,9 +333,18 @@ class Client
             }
         }
         
-        $response = $this->client->get($url);
+        $response = $this->client->get($url, $options);
         
-        return json_decode( ( string ) $response->getBody());
+        $code = $response->getStatusCode();
+        
+        if ($code == '200'){
+            return json_decode( ( string ) $response->getBody());
+        } else {
+            //echo (( string ) $response->getBody());
+            
+            // die($url);
+            throw new \Exception('ERR' . $code . ' : Error fetching data for domain');
+        }
     }
 
     protected function _post($resource, $data){
@@ -232,28 +357,34 @@ class Client
                     "attributes" => $data
                 ]
             ],
-            "headers" => $this->headers
+            "headers" => $this->headers,
+            "http_errors" => false
         ];
-
-        try{
-            $response = $this->client->post(
+        
+         $response = $this->client->post(
             $url, 
             $options
-            );
-
-            return json_decode((string) $response->getBody());
-        } catch(\Exception $ex) {
-            $error = [
-                "errors" => [
-                    [
-                        "status" => "500",
-                        "title" => "Recheck ns1, ns2 or domain_id"
-                    ]
-                ]
-            ];
+        );
+        
+        $code = $response->getStatusCode();
             
-            return json_encode($error);
+        if ($code == '401'){
+            throw new \Exception('Authentiation to registrar failed. Verify your token');
+        } elseif ($code == '500'){
+            throw new \Exception('ERR43 : Domain could not be registered');
+        } elseif ($code == '201' || $code == '200'){
+            // Successful but with custom errors
+            $data = json_decode((string) $response->getBody());
+            
+            if (! is_null($data->errors)){
+                $errors = implode(',', $data->errors);
+                
+                throw new \Exception($errors);
+            }
+            
+            return $data;
         }
+
     }
 
     protected function _patch($resource, $record, $data){
@@ -267,28 +398,28 @@ class Client
                     "attributes" => $data
                 ]
             ],
-            "headers" => $this->headers
+            "headers" => $this->headers,
+             "http_errors" => false
         ];
-
-        try{
-            $response = $this->client->patch(
+        
+        $response = $this->client->patch(
             $url, 
             $options
-            );
+        );
+        
+        $code = $response->getStatusCode();
+        
+        
+        
+        if ($code == '200' || $code == '201'){
+            return json_decode( ( string ) $response->getBody());
+        } else {
+            // print_r($data);
+            // echo (( string ) $response->getBody());
             
-
-            return (string) $response->getBody();
-        } catch(\Exception $ex) {
-            $error = [
-                "errors" => [
-                    [
-                        "status" => "500",
-                        "title" => "Error while registering domain"
-                    ]
-                ]
-            ];
-            
-            return json_encode($error);
+            // die($url);
+            throw new \Exception('ERR' . $code . ' : Error updating data');
         }
     }
 }
+
