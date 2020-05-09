@@ -376,11 +376,11 @@ class Client
             // Successful but with custom errors
             $data = json_decode((string) $response->getBody());
             
-            if (! is_null($data->errors)){
-                $errors = implode(',', $data->errors);
-                
-                throw new \Exception($errors);
-            }
+//            if (! is_null($data->errors)){
+  //              $errors = implode(',', $data->errors);
+    //            
+      //          throw new \Exception($errors);
+        //    }
             
             return $data;
         }
