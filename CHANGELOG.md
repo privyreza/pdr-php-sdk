@@ -1,3 +1,9 @@
+## <small>1.0.1 (2020-05-09)</small>
+
+* fix: Fixed error while getting errors proprty from guzzle 201 or 200 response ([1688432](https://github.com/privyreza/pdr-php-sdk/commit/1688432))
+
+
+
 ## 1.0.0 (2020-04-25)
 
 * Added functionality for NS update ([8c37fea](https://github.com/privyreza/pdr-php-sdk/commit/8c37fea))
