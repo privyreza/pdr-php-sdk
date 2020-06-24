@@ -1,5 +1,16 @@
 ## <small>1.0.1 (2020-06-24)</small>
 
+* Release 1.0.1 ([7b796b0](https://github.com/privyreza/pdr-php-sdk/commit/7b796b0))
+* Release 1.0.1 ([1856ff7](https://github.com/privyreza/pdr-php-sdk/commit/1856ff7))
+* Release 1.0.1 ([3c3bea8](https://github.com/privyreza/pdr-php-sdk/commit/3c3bea8))
+* fix: corrected the CHANGLOG.md ([9b48e1b](https://github.com/privyreza/pdr-php-sdk/commit/9b48e1b))
+* fix: Fixed error while getting errors proprty from guzzle 201 or 200 response ([1688432](https://github.com/privyreza/pdr-php-sdk/commit/1688432))
+* fix: Removed other contacts for now - tech ([a2e74d9](https://github.com/privyreza/pdr-php-sdk/commit/a2e74d9))
+
+
+
+## <small>1.0.1 (2020-06-24)</small>
+
 * Release 1.0.1 ([1856ff7](https://github.com/privyreza/pdr-php-sdk/commit/1856ff7))
 * Release 1.0.1 ([3c3bea8](https://github.com/privyreza/pdr-php-sdk/commit/3c3bea8))
 * fix: corrected the CHANGLOG.md ([9b48e1b](https://github.com/privyreza/pdr-php-sdk/commit/9b48e1b))
