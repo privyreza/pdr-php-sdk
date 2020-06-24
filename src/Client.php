@@ -243,31 +243,32 @@ class Client
         ];
 
         $contantId = $this->_get('contacts', '', $contactsFilter)->data[0]->id;
+        $registrant = $this->_patch('contacts', $contantId, $data['contacts']['registrant']);
         
-        // Get registrant
-        $registrantFilter = [
-            "contact_id" => $contantId
-        ];
+        // // Get registrant
+        // $registrantFilter = [
+        //     "contact_id" => $contantId
+        // ];
 
-        $registrantId = $this->_get('registrants', '', $registrantFilter)->data[0]->id;
+        // $registrantId = $this->_get('registrants', '', $registrantFilter)->data[0]->id;
 
-        // Update registrant
-        $registrant = $this->_patch('registrants', $registrantId, $data['contacts']['registrant']);
+        // // Update registrant
+        // $registrant = $this->_patch('registrants', $registrantId, $data['contacts']['registrant']);
 
-        // Get tech contact
-        $techFilter = [
-            "contact_id" => $contantId
-        ];
+        // // Get tech contact
+        // $techFilter = [
+        //     "contact_id" => $contantId
+        // ];
 
-        $techId = $this->_get('techs', '', $techFilter)->data[0]->id;
+        // $techId = $this->_get('techs', '', $techFilter)->data[0]->id;
 
-        // Update Tech Contact
-        $tech = $this->_patch('techs', $techId, $data['contacts']['tech']);
+        // // Update Tech Contact
+        // $tech = $this->_patch('techs', $techId, $data['contacts']['tech']);
 
         return [
             'contacts' => [
                 'registrant' => $registrant,
-                'tech' => $tech
+                // 'tech' => $tech
             ]
         ];
     }
