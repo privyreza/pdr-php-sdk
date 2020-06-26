@@ -105,12 +105,20 @@ class Client
      */
     public function registerDomain($data){
         // Check if domain does not exist first
+        $domain = null;
         $domain_name = $data['domain'];
         $domainFilter = [
             'name' => $domain_name
         ];
         
-        $domain = $this->_get('domains', '', $domainFilter)->data[0];
+        $remoteDomain = $this->_get('domains', '', $domainFilter)->data;
+
+        
+            \Log::error(json_encode($remoteDomain));
+
+        if (!empty($remoteDomain)) {
+            $domain = $remoteDomain->data[0];
+        }
         
         if (is_null($domain)){
              // Create Domain
