@@ -1,3 +1,9 @@
+## <small>1.0.3 (2020-06-26)</small>
+
+* fix: Resolved issue when checking remote domains ([c51103f](https://github.com/privyreza/pdr-php-sdk/commit/c51103f))
+
+
+
 ## <small>1.0.2 (2020-06-26)</small>
 
 * Upgraded vlucas/phpdotenv to 4.1.7 ([abee378](https://github.com/privyreza/pdr-php-sdk/commit/abee378))
