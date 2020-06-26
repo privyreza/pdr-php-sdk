@@ -1,3 +1,9 @@
+## <small>1.0.2 (2020-06-26)</small>
+
+* Upgraded vlucas/phpdotenv to 4.1.7 ([abee378](https://github.com/privyreza/pdr-php-sdk/commit/abee378))
+
+
+
 ## <small>1.0.1 (2020-06-24)</small>
 
 * Release 1.0.1 ([7b796b0](https://github.com/privyreza/pdr-php-sdk/commit/7b796b0))
