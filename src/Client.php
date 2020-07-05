@@ -113,9 +113,6 @@ class Client
         
         $remoteDomain = $this->_get('domains', '', $domainFilter)->data;
 
-        
-            \Log::error(json_encode($remoteDomain));
-
         if (!empty($remoteDomain)) {
             $domain = $remoteDomain->data[0];
         }
@@ -215,6 +212,23 @@ class Client
         $ns =  $this->_get('nameservers', "", $nameserversFilters)->data[0]->attributes;
        
         return $ns;
+    }
+
+    /**
+     * Get Domains
+     *
+     */
+     public function getDomains($filters){
+        $domains = [];
+        $response =  $this->_get('domains', "", $filters);
+
+        if ( ! empty( $domains )) {
+            foreach ($domains as $key => $domain) {
+                array_push($domains, $domain->attributes);
+            }
+        }
+       
+        return $domains;
     }
     
     protected function getDomainId($domain){
