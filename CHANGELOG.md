@@ -1,3 +1,10 @@
+## 1.1.0 (2020-08-22)
+
+* feat: Added getDomains function ([50968a5](https://github.com/privyreza/pdr-php-sdk/commit/50968a5))
+* feat: Added the transferDomain function ([f697381](https://github.com/privyreza/pdr-php-sdk/commit/f697381))
+
+
+
 ## <small>1.0.3 (2020-06-26)</small>
 
 * fix: Resolved issue when checking remote domains ([c51103f](https://github.com/privyreza/pdr-php-sdk/commit/c51103f))
