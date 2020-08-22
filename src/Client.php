@@ -146,6 +146,53 @@ class Client
             throw new \Exception('ERR66 : Domain already registered');
         }
     }
+
+    /**
+     * Transfer Domain
+     */
+    public function transferDomain($data){
+        // Check if domain does not exist first
+        $domain = null;
+        $domain_name = $data['domain'];
+        $domainFilter = [
+            'name' => $domain_name
+        ];
+        
+        $remoteDomain = $this->_get('domains', '', $domainFilter)->data;
+
+        if (!empty($remoteDomain)) {
+            $domain = $remoteDomain->data[0];
+        }
+        
+        if ( is_null($domain) ){
+             // Create Domain
+            $domainData = [
+                "name" => $data['domain'],
+                "status" => "pending"
+            ];
+            $domain = $this->createDomain($domainData)->data;
+    
+            // Create Contact
+            $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain->id]);
+            $contact = $this->createContact($contact_data);
+    
+            // Create NS
+            $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain->id]);
+            $ns = $this->createNS($ns_data);
+        }
+        
+        $domain_id = $domain->id;
+        
+        $domainStatus = $domain->attributes->status;
+        
+        if ($domainStatus !== 'transferred'){
+            // Submit the domain for registration
+            $transferLink = 'domains/' . $domain_id . '/transfer';
+            return $this->_post($transferLink, $data);
+        } else {
+            throw new \Exception('ERR67 : Domain already transferred');
+        }
+    }
     
     public function getDomainInfo($data){
         $domain_name = $data['domain']['name'];
