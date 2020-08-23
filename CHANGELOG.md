@@ -1,3 +1,11 @@
+## <small>1.1.1 (2020-08-23)</small>
+
+* Release 1.1.1 ([70472ce](https://github.com/privyreza/pdr-php-sdk/commit/70472ce))
+* Release 1.1.1 ([818fcff](https://github.com/privyreza/pdr-php-sdk/commit/818fcff))
+* fix: Removed extra data referrence on registerDomain and transferDomain function ([868f980](https://github.com/privyreza/pdr-php-sdk/commit/868f980))
+
+
+
 ## 1.1.0 (2020-08-22)
 
 * feat: Added getDomains function ([50968a5](https://github.com/privyreza/pdr-php-sdk/commit/50968a5))
