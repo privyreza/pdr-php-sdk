@@ -114,7 +114,7 @@ class Client
         $remoteDomain = $this->_get('domains', '', $domainFilter)->data;
 
         if (!empty($remoteDomain)) {
-            $domain = $remoteDomain->data[0];
+            $domain = $remoteDomain[0];
         }
         
         if (is_null($domain)){
@@ -161,7 +161,7 @@ class Client
         $remoteDomain = $this->_get('domains', '', $domainFilter)->data;
 
         if (!empty($remoteDomain)) {
-            $domain = $remoteDomain->data[0];
+            $domain = $remoteDomain[0];
         }
         
         if ( is_null($domain) ){
