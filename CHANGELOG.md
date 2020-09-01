@@ -1,5 +1,6 @@
-## <small>1.1.1 (2020-08-23)</small>
+## <small>1.1.1 (2020-09-01)</small>
 
+* Release 1.1.1 ([a6cb992](https://github.com/privyreza/pdr-php-sdk/commit/a6cb992))
 * Release 1.1.1 ([70472ce](https://github.com/privyreza/pdr-php-sdk/commit/70472ce))
 * Release 1.1.1 ([818fcff](https://github.com/privyreza/pdr-php-sdk/commit/818fcff))
 * fix: Removed extra data referrence on registerDomain and transferDomain function ([868f980](https://github.com/privyreza/pdr-php-sdk/commit/868f980))
