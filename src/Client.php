@@ -87,6 +87,16 @@ class Client
     }
 
     /**
+     * Create admin contact
+     */
+     /**
+     * Create new Contact
+     */
+    public function createAdminContact($contact = []){
+        return $this->_post('domain-admins', $contact);
+    }
+
+    /**
      * Create new NS
      */
     public function createNS($ns){
@@ -125,9 +135,13 @@ class Client
             ];
             $domain = $this->createDomain($domainData)->data;
     
-            // Create Contact
+            // Create Contact -registrant
             $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain->id]);
             $contact = $this->createContact($contact_data);
+
+            // Create Contact - admin
+            $contact_data = array_merge($data['contacts']['admin'], ['domain_id' => $domain->id]);
+            $contact = $this->createAdminContact($contact_data);
     
             // Create NS
             $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain->id]);
@@ -175,6 +189,10 @@ class Client
             // Create Contact
             $contact_data = array_merge($data['contacts']['registrant'], ['domain_id' => $domain->id]);
             $contact = $this->createContact($contact_data);
+
+            // Create admin contact
+            $contact_data = array_merge($data['contacts']['admin'], ['domain_id' => $domain->id]);
+            $contact = $this->createAdminContact($contact_data);
     
             // Create NS
             $ns_data = array_merge($data['nameservers'], ['domain_id' => $domain->id]);
