@@ -1,3 +1,9 @@
+## 2.0.0 (2020-11-17)
+
+* Added ability to copy consultant on all emails from zispa ([2a0816a](https://github.com/privyreza/pdr-php-sdk/commit/2a0816a))
+
+
+
 ## <small>1.1.1 (2020-09-01)</small>
 
 * Release 1.1.1 ([a6cb992](https://github.com/privyreza/pdr-php-sdk/commit/a6cb992))
