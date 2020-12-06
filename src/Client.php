@@ -93,7 +93,7 @@ class Client
      * Create new Contact
      */
     public function createAdminContact($contact = []){
-        return $this->_post('domain-admins', $contact);
+        return $this->_post('domainadmins', $contact);
     }
 
     /**
