@@ -1,3 +1,10 @@
+## <small>2.0.1 (2020-12-27)</small>
+
+* Added ability to cc consultant ([be7b0fb](https://github.com/privyreza/pdr-php-sdk/commit/be7b0fb))
+* Added fallback for host ([dc228ff](https://github.com/privyreza/pdr-php-sdk/commit/dc228ff))
+
+
+
 ## 2.0.0 (2020-11-17)
 
 * Added ability to copy consultant on all emails from zispa ([2a0816a](https://github.com/privyreza/pdr-php-sdk/commit/2a0816a))
