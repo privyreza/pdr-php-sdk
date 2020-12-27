@@ -49,6 +49,11 @@ class Client
      */
     public function __construct($token){
         $this->host = getenv('HOST');
+        // If host is null use api.resellme.co.zw
+        if (is_null($this->host)) {
+            $this->host = 'https://api.resellme.co.zw';
+        }
+        
         $this->apiVersion = getenv('API_VERSION');
         $this->apiUrl = $this->host . '/api/' . $this->apiVersion;
         $this->debug = getenv('DEBUG');
