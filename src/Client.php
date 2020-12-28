@@ -81,7 +81,14 @@ class Client
             "domain" => $domain
         ];
 
-        return $this->_post('searches', $domain);
+        // Create search record
+        $searchRecord = $this->_post('searches', $domain);
+
+        // Do the searching
+        $searchLink = 'searches/' . $searchRecord->id . '/search';
+        $result = $this->_post($searchLink, $domain);
+
+        return $result;
     }
 
      /**
