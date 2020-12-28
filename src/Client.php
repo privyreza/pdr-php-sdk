@@ -81,7 +81,7 @@ class Client
             "domain" => $domain
         ];
 
-        return $this->_post('domain-searches', $domain);
+        return $this->_post('searches', $domain);
     }
 
      /**
