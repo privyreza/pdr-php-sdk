@@ -1,3 +1,11 @@
+## 3.0.0 (2021-01-28)
+
+* Fixed the search domain function ([07fa5b2](https://github.com/privyreza/pdr-php-sdk/commit/07fa5b2))
+* Upgraded guzzle ([3014f10](https://github.com/privyreza/pdr-php-sdk/commit/3014f10))
+* fix: changed domain-serarches to searches ([5434beb](https://github.com/privyreza/pdr-php-sdk/commit/5434beb))
+
+
+
 ## <small>2.0.1 (2020-12-27)</small>
 
 * Added ability to cc consultant ([be7b0fb](https://github.com/privyreza/pdr-php-sdk/commit/be7b0fb))
