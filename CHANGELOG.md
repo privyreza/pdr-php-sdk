@@ -1,3 +1,10 @@
+## <small>3.0.2 (2021-01-29)</small>
+
+* Removed node_modules from git ([578b76b](https://github.com/privyreza/pdr-php-sdk/commit/578b76b))
+* fix: minor serach fix ([7fc4e94](https://github.com/privyreza/pdr-php-sdk/commit/7fc4e94))
+
+
+
 ## <small>3.0.1 (2021-01-29)</small>
 
 * Reverted domain searches ([3f278c0](https://github.com/privyreza/pdr-php-sdk/commit/3f278c0))
