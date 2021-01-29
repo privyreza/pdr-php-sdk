@@ -1,3 +1,9 @@
+## <small>3.0.1 (2021-01-29)</small>
+
+* Reverted domain searches ([3f278c0](https://github.com/privyreza/pdr-php-sdk/commit/3f278c0))
+
+
+
 ## 3.0.0 (2021-01-28)
 
 * Fixed the search domain function ([07fa5b2](https://github.com/privyreza/pdr-php-sdk/commit/07fa5b2))
